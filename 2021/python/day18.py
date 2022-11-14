@@ -211,4 +211,14 @@ assert (
     == 3488
 )
 
-print(sum_list(parse_input()).magnitude())
+problem = parse_input()
+print(sum_list(problem).magnitude())
+
+from itertools import product
+
+m = 0
+for x, y in product(problem, problem):
+    if x == y:
+        continue
+    m = max(m, (x + y).magnitude())
+print(m)
