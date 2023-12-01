@@ -1,30 +1,12 @@
 use std::error::Error;
 use std::fs;
 
-fn find_first(line: &str) -> Option<char> {
-    for char in line.chars() {
-        if char.is_digit(10) {
-            return Some(char);
-        }
-    }
-    None
-}
-
-fn find_last(line: &str) -> Option<char> {
-    for char in line.chars().rev() {
-        if char.is_digit(10) {
-            return Some(char);
-        }
-    }
-    None
-}
-
 fn part1(problem: &str) -> Option<usize> {
     let mut sum: usize = 0;
-    for line in problem.trim().split("\n") {
-        let first = find_first(line)?;
-        let second = find_last(line)?;
-        let number: usize = format!("{first}{second}").parse().unwrap();
+    for line in problem.trim().lines() {
+        let first_digit = line.chars().filter(|c| c.is_digit(10)).next().unwrap();
+        let last_digit = line.chars().rev().filter(|c| c.is_digit(10)).next()?;
+        let number: usize = format!("{first_digit}{last_digit}").parse().unwrap();
         sum += number;
     }
     Some(sum)
