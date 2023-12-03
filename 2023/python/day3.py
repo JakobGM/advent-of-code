@@ -1,3 +1,4 @@
+from collections import defaultdict
 from pathlib import Path
 
 
@@ -44,5 +45,39 @@ for row, line in enumerate(PROBLEM.splitlines()):
     current_number = []
     is_part_number = False
 
+
+print(sum)
+
+
+# --- Part 2 ---
+adjacent_numbers = defaultdict(list)
+current_series = []
+adjacent_coords = set[tuple[int, int]]()
+for row, line in enumerate(PROBLEM.splitlines()):
+    for col, char in enumerate(line):
+        if char.isnumeric():
+            current_series.append(char)
+            adjacent_coords |= neighbors((row, col))
+        else:
+            if current_series:
+                number = int("".join(current_series))
+                for coord in adjacent_coords:
+                    adjacent_numbers[coord].append(number)
+            current_series = []
+            adjacent_coords = set()
+    if current_series:
+        number = int("".join(current_series))
+        for coord in adjacent_coords:
+            adjacent_numbers[coord].append(number)
+    current_series = []
+    adjacent_coords = set()
+
+sum = 0
+for row, line in enumerate(PROBLEM.splitlines()):
+    for col, char in enumerate(line):
+        if char == "*":
+            neighbors = adjacent_numbers[(row, col)]
+            if len(neighbors) == 2:
+                sum += neighbors[0] * neighbors[1]
 
 print(sum)
