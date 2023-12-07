@@ -56,3 +56,47 @@ for rank, hand in enumerate(hands):
     winnings += (rank + 1) * hand.bid
 
 print(winnings)
+
+
+# --- Part two ---
+NEW_ORDERING = "AKQT98765432J"
+NEW_STRENGTH = {card: strength for strength, card in enumerate(reversed(NEW_ORDERING))}
+
+
+class NewHand:
+    def __init__(self, line: str) -> None:
+        self.hand, bid = line.split()
+        self.bid = int(bid)
+        self.strengths = tuple(NEW_STRENGTH[card] for card in self.hand)
+
+        count = Counter(self.hand.replace("J", ""))
+        match list(sorted(count.values(), reverse=True)):
+            case [] | [_]:  # Full house
+                self.kind = 6
+            case [_, 1]:  # Four of a kind
+                self.kind = 5
+            case [_, 2]:  # Full house
+                self.kind = 4
+            case [_, 1, 1]:  # Three of a kind
+                self.kind = 3
+            case [_, _, 1]:  # Two pairs
+                self.kind = 2
+            case [_, 1, 1, 1]:  # One pair
+                self.kind = 1
+            case [1, 1, 1, 1, 1]:  # High card
+                self.kind = 0
+            case _:
+                raise RuntimeError()
+        self.sort_key = (self.kind,) + self.strengths
+
+
+new_hands = []
+for line in PROBLEM.splitlines():
+    new_hands.append(NewHand(line=line))
+
+new_hands.sort(key=lambda hand: hand.sort_key)
+new_winnings = 0
+for rank, new_hand in enumerate(new_hands):
+    new_winnings += (rank + 1) * new_hand.bid
+
+print(new_winnings)
